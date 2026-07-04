@@ -15,7 +15,11 @@
                     <group string="Progression">
                         <field name="character_level" readonly="1"/>
                         <field name="character_xp" readonly="1"/>
-                        <field name="character_xp_next_level"/>
+                        <field name="character_xp_next_level" readonly="1"/>
+                        <field name="character_xp_progress"
+                               readonly="1"
+                               widget="progressbar"
+                               options="{'max_value': 100, 'edit_readonly': True}"/>
                     </group>
                 </page>
             </xpath>
