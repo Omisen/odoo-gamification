@@ -8,9 +8,14 @@
         <field name="arch" type="xml">
             <xpath expr="//page[@name='account_security']" position="after">
                 <page name="ond_character" string="Character">
-                    <group>
+                    <group string="Identity">
                         <field name="character_name" placeholder="e.g. Thalindra the Wise"/>
                         <field name="character_class"/>
+                    </group>
+                    <group string="Progression">
+                        <field name="character_level" readonly="1"/>
+                        <field name="character_xp" readonly="1"/>
+                        <field name="character_xp_next_level"/>
                     </group>
                 </page>
             </xpath>
