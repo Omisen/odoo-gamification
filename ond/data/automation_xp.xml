@@ -7,13 +7,13 @@
         <field name="name">OND — Task completata (+50 XP)</field>
         <field name="model_id" ref="project.model_project_task"/>
         <field name="trigger">on_write</field>
-        <field name="filter_pre_domain">[('state', '!=', '1_done')]</field>
-        <field name="filter_domain">[('state', '=', '1_done'), ('parent_id', '=', False)]</field>
+        <field name="filter_pre_domain">[('state', '!=', '1_done'), ('xp_awarded', '=', False)]</field>
+        <field name="filter_domain">[('state', '=', '1_done'), ('xp_awarded', '=', False), ('parent_id', '=', False)]</field>
         <field name="action_server_ids" eval="[(0, 0, {
             'name':     'OND — Assegna XP task completata',
             'model_id': ref('project.model_project_task'),
             'state':    'code',
-            'code':     &quot;for user in record.user_ids:\n    user.add_xp(50)\n&quot;,
+            'code':     &quot;for user in record.user_ids:\n    user.add_xp(50)\nrecord.sudo().write({'xp_awarded': True})\n&quot;,
         })]"/>
     </record>
 
