@@ -29,7 +29,9 @@ Features
 
     'depends': [
         'base',
+        'base_automation',
         'gamification',
+        'project',
         'mail',
         'web',
     ],
@@ -39,7 +41,7 @@ Features
         
 
         # Data
-        
+        'data/automation_xp.xml',
 
         # Views
         'views/res_users_views.xml',

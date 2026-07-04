@@ -44,16 +44,59 @@ class ResUsers(models.Model):
         for user in self:
             
             # exp per raggiungere il livello successivo
-            xp_needed   = (user.character_level ** 2) * 100
+            xp_needed = (user.character_level ** 2) * 100
             # exp a inizio livello
-            xp_prev     = ((user.character_level - 1) ** 2) * 100
+            xp_prev = ((user.character_level - 1) ** 2) * 100
             # exp guadagnati all interno del livello attuale
             xp_in_level = user.character_xp - xp_prev
             # intervallo totale exp livello attuale
-            xp_range    = xp_needed - xp_prev
+            xp_range = xp_needed - xp_prev
             
             user.character_xp_next_level = xp_needed
             if xp_range > 0:
                 user.character_xp_progress = min(round(xp_in_level / xp_range * 100, 1), 100.0)
             else:
                 user.character_xp_progress = 0.0
+    
+    def add_xp(self, amount):
+        # il metodo usa sudo() per scrivere sui campi readonly non modificabili esternamente
+        for user in self:
+            # somma gli xp guadagnati al totale attuale
+            new_xp = user.character_xp + amount
+ 
+            # controllo sul superamento della soglia del livello successivo
+            xp_needed = (user.character_level ** 2) * 100
+ 
+            if new_xp >= xp_needed:
+                # lvl up che incrementa il livello e scala gli xp
+                user.sudo().write({
+                    'character_xp':    new_xp,
+                    'character_level': user.character_level + 1,
+                })
+                # notifica il level up via chatter sull'utente
+                user._notify_level_up()
+            else:
+                user.sudo().write({'character_xp': new_xp})
+                # notifica xp guadagnati
+                self.env['bus.bus']._sendone(
+                    user.partner_id,
+                    'simple_notification',
+                    {
+                        'title': 'XP guadagnati!',
+                        'message': f"+{amount} XP — {user.character_name or user.name}",
+                        'type': 'info',
+                    }
+                )
+ 
+    def _notify_level_up(self):
+        # invio di notifica interna al lvl up usando mail.thread nel chatter
+        for user in self:
+            self.env['bus.bus']._sendone(
+                user.partner_id,
+                'simple_notification',
+                    {
+                        'title': 'Level Up!',
+                        'message': f"{user.character_name or user.name} è ora livello {user.character_level} ⚔️",
+                        'type': 'success',
+                    }
+                )
