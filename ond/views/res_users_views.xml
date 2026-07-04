@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_users_form_ond" model="ir.ui.view">
+        <field name="name">res.users.form.ond</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='account_security']" position="after">
+                <page name="ond_character" string="Character">
+                    <group>
+                        <field name="character_name" placeholder="e.g. Thalindra the Wise"/>
+                        <field name="character_class"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
